@@ -1,11 +1,15 @@
 
-Node + Create React App + Docker Compose
+Node + Create React App + PostgreSQL + Docker Compose
 ========================================
 
-A project that runs a Node server, a create-react-app app and a Postgres db server via three separate containers, using Docker Compose.
+A project that runs a Node server, a create-react-app application and a Postgres db server via three separate containers, using Docker Compose. 
 
-This project is largely based on the following work by mrcoles.
-https://github.com/mrcoles/node-react-docker-compose
+This project is largely based on the following work by mrcoles. Without his efforts this project would have been a lot more difficult. https://github.com/mrcoles/node-react-docker-compose
+
+Expectations for this project are to provide an easily implementable, full-stack, JS-centric application template supported by Docker to allow for quick setup, iteration and deployment of web projects
+
+As of now, (20APR2019) the project is not hardened in any way with such things as .env files or Docker secrets and the like. This hardening will be implemented eventually but first there will be some testing and development to get an initial data flow to and from the db as well as outlining the most basic UI elements to provide a little scaffolding that goes beyond what `create-react-app` provides upon spin up.
+
 
 ## Development
 
@@ -13,11 +17,11 @@ https://github.com/mrcoles/node-react-docker-compose
 docker-compose up
 ```
 
-For development, the `node_server/`, `react_client/` and postgres_server directories have their own docker containers, which are configured via the `docker-compose.yml` file at the root of the project.
+For development, the `node_server/`, `react_client/` and `postgres_server` directories have their own docker containers, which are configured via the `docker-compose.yml` file at the root of the project.
 
-The client server is spun up at `localhost:3000` and it proxies internally to the server using the linked name as `server:8080`.
+The react_client server is spun up at `localhost:3000` and it proxies internally to the node_server using the linked name of `node_server:8080`.
 
-The local directories are mounted into the containers, so changes will reflect immediately. However, changes to package.json will likely need a rebuild: `docker-compose down && docker-compose build && docker-compose up`.
+The local source file directories are bindmounted into the containers, so local changes are reflected immediately. However, changes to package.json will likely need a rebuild: `docker-compose down && docker-compose build && docker-compose up`.
 
 ### Notes
 
