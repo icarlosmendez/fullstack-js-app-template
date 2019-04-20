@@ -1,0 +1,71 @@
+version: '3'
+services:
+  # Create the Node backend service
+  node_server:
+    build:
+      context: ./node_server/
+      dockerfile: node.Dockerfile
+    # Define port mapping for the dev environment
+    ports:
+      - "8080:8080"
+    # Define a network for the node_server service to connect to.
+    # networks: 
+    #   - backend
+    # env_file: ./server/.env # TODO - uncomment this to auto-load your .env file!
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    # Bindmount volumes
+    volumes:
+      - ./node_server/:/usr/app
+      - /usr/app/node_modules
+    command: /usr/app/node_modules/.bin/nodemon src/index.js
+  
+  # Create the React client service
+  react_client:
+    build:
+      context: ./react_client/
+      dockerfile: react.Dockerfile
+    # Define port mapping for the dev environment
+    ports:
+      - "3000:3000"
+    # Define a network for the react_client service to connect to.
+    # networks: 
+    #   - frontend
+    volumes:
+      - ./react_client/:/usr/app
+      - /usr/app/node_modules
+    command: npm start
+    depends_on:
+      - node_server
+
+  # Create the Database service.   
+  postgres_server:
+    build:
+      context: ./postgres_server/
+      dockerfile: postgres.Dockerfile
+    # Define port mapping for the dev environment
+    # ports:
+      # - "5432:5432"
+    # Define the network for the db service to connect to.
+    # networks:
+    #   - backend
+    # Define envars for postgres db.
+    environment:
+      # POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: mydbpasswd
+    # Create volume to persist data relating to the jenkins config and results. 
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+
+# Expose the network the services we will connect to.
+# networks:
+#   frontend:
+#   backend:
+
+volumes:
+  node_server:
+  react_client:
+  postgres-data:
+  
