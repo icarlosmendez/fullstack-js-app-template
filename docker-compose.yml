@@ -5,6 +5,8 @@ services:
     build:
       context: ./node_server/
       dockerfile: node.Dockerfile
+    # Define a custom image name
+    image: node_server
     # Define port mapping for the dev environment
     ports:
       - "8080:8080"
@@ -26,6 +28,8 @@ services:
     build:
       context: ./react_client/
       dockerfile: react.Dockerfile
+    # Define a custom image name
+    image: react_client
     # Define port mapping for the dev environment
     ports:
       - "3000:3000"
@@ -44,6 +48,8 @@ services:
     build:
       context: ./postgres_server/
       dockerfile: postgres.Dockerfile
+    # Define a custom image name
+    image: postgres_server
     # Define port mapping for the dev environment
     # ports:
       # - "5432:5432"
