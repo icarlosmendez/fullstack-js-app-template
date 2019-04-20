@@ -10,9 +10,6 @@ services:
     # Define port mapping for the dev environment
     ports:
       - "8080:8080"
-    # Define a network for the node_server service to connect to.
-    # networks: 
-    #   - backend
     # env_file: ./server/.env # TODO - uncomment this to auto-load your .env file!
     environment:
       - NODE_ENV=development
@@ -33,9 +30,6 @@ services:
     # Define port mapping for the dev environment
     ports:
       - "3000:3000"
-    # Define a network for the react_client service to connect to.
-    # networks: 
-    #   - frontend
     volumes:
       - ./react_client/:/usr/app
       - /usr/app/node_modules
@@ -50,25 +44,13 @@ services:
       dockerfile: postgres.Dockerfile
     # Define a custom image name
     image: postgres_server
-    # Define port mapping for the dev environment
-    # ports:
-      # - "5432:5432"
-    # Define the network for the db service to connect to.
-    # networks:
-    #   - backend
     # Define envars for postgres db.
     environment:
-      # POSTGRES_USER: sonar
+      # The following password should be changed to something more secure before moving to production
       POSTGRES_PASSWORD: mydbpasswd
     # Create volume to persist data relating to the jenkins config and results. 
     volumes:
       - postgres-data:/var/lib/postgresql/data
-
-
-# Expose the network the services we will connect to.
-# networks:
-#   frontend:
-#   backend:
 
 volumes:
   node_server:
