@@ -3,4 +3,6 @@ npm-debug.log
 react_client/src/compiled/
 express_server/.env
 postgres-data
+express_server/package.json
+react_client/package.json
 package-lock.json
