@@ -1,7 +1,6 @@
 node_modules
 npm-debug.log
 react_client/src/compiled/
-node_server/.env
+express_server/.env
 postgres-data
 package-lock.json
-package.json
