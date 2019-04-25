@@ -26,6 +26,13 @@ The local sourcefile directories are bindmounted into the containers, so local c
 One caveat to this is that changes to any of the package.json files, of which there are 3 (project root level, react_client and node_server containers) will likely need a rebuild: 
 `docker-compose down && docker-compose up --build`.
 
+```
+pgAdmin
+```
+
+pgAdmin is fully configured to begin running inside the container and is accessible in the browser at localhost:80. The login credentials are set as ENVARS in the docker-compose.yml file in the pgadmin service definition. Change these values to suit your personal situation.
+
+
 ### Notes
 
 #### Adding new scss files
