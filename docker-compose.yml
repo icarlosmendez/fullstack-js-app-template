@@ -1,12 +1,13 @@
-version: '3'
+version: '3.1'
 services:
   # Create the Node backend service
-  node_server:
+  express_server:
     build:
-      context: ./node_server/
-      dockerfile: node.Dockerfile
+      context: ./express_server/
+      dockerfile: express.Dockerfile
     # Define a custom image name
-    image: node_server
+    image: express_server
+    restart: always
     # Define port mapping for the dev environment
     ports:
       - "8080:8080"
@@ -16,10 +17,10 @@ services:
       - CHOKIDAR_USEPOLLING=true
     # Bindmount volumes
     volumes:
-      - ./node_server/:/usr/app
+      - ./express_server/:/usr/app
       - /usr/app/node_modules
     command: /usr/app/node_modules/.bin/nodemon src/index.js
-  
+
   # Create the React client service
   react_client:
     build:
@@ -27,6 +28,7 @@ services:
       dockerfile: react.Dockerfile
     # Define a custom image name
     image: react_client
+    restart: always
     # Define port mapping for the dev environment
     ports:
       - "3000:3000"
@@ -34,9 +36,7 @@ services:
       - ./react_client/:/usr/app
       - /usr/app/node_modules
     command: npm start
-    depends_on:
-      - node_server
-
+      
   # Create the Database service.   
   postgres_server:
     build:
@@ -44,16 +44,51 @@ services:
       dockerfile: postgres.Dockerfile
     # Define a custom image name
     image: postgres_server
+    restart: always
+    # Define port mapping for the dev environment
+    ports:
+      - "5432:5432"
     # Define envars for postgres db.
     environment:
+      # Define a username for the superuser
+      POSTGRES_USER: dbuser
+      # Define a password for the user above
       # The following password should be changed to something more secure before moving to production
-      POSTGRES_PASSWORD: mydbpasswd
-    # Create volume to persist data relating to the jenkins config and results. 
+      POSTGRES_PASSWORD: dbpass
+      # Define a name for the database
+      POSTGRES_DB: testdb
+      # Define a password for the psql client used on the command line at run time
+      # PGPASSWORD: psqlpassword
+    # Create volumes to persist data. 
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      # Bindmount local .sql file to import and test db at launch.
+      # Switch this out with your .sql file for dev work.
+
+  # Create the pgadmin service.
+  pgadmin:
+    build:
+      context: ./pgadmin_server/
+      dockerfile: pgadmin.Dockerfile
+    # Define a custom image name
+    image: pgadmin_server
+    # Define port mapping for the dev environment
+    ports: 
+      - "80:80"
+    # Define envars for pgadmin. These envars will be used to login to the web u/i at localhost:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: calicci.gardachi@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: pgadmin
+    # Bindmount local files to import server config and test db at launch.
+    volumes:
+      # Pre-defined server config details are loaded into pgAdmin upon startup.
+      # Provides consistent provisioning across restarts and rebuilds.
+      # Changes to servers.json requires a rebuild of the container.
+      # Also this is a bindmount and as such does not require a value in the 'volumes' item below.
+      - ./pgadmin_server/servers.json:/pgadmin4/servers.json
 
 volumes:
-  node_server:
+  express_server:
   react_client:
   postgres-data:
   
